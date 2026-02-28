@@ -1,29 +1,55 @@
-import java.time.LocalDate;
+package domain;
+
+import domain.value.FlightAutonomy;
+import domain.exception.InvalidRobotSpecificationException;
 
 public class RobotAereo extends Robot implements ResistanceEvaluable {
 
-    private int altitudMaxima;
-    private int autonomia;
+    private final int maxAltitude;
+    private final FlightAutonomy autonomy;
 
-    public RobotAereo(String name, String fabricante, int anyo, int altitudMaxima, int autonomia) {
-        super(name, fabricante, anyo);
-        this.altitudMaxima = altitudMaxima;
-        this.autonomia = autonomia;
+    public RobotAereo(String name,
+                      String manufacturer,
+                      int manufacturingYear,
+                      int maxAltitude,
+                      int autonomyMinutes) {
+
+        super(name, manufacturer, manufacturingYear);
+
+        if (maxAltitude <= 0) {
+            throw new InvalidRobotSpecificationException(
+                    "Max altitude must be greater than zero"
+            );
+        }
+
+        this.maxAltitude = maxAltitude;
+        this.autonomy = new FlightAutonomy(autonomyMinutes);
     }
 
     @Override
     public String getTechnicalDescription() {
-        return super.getName() + " vuela hasta " + this.altitudMaxima + " m durante" + this.autonomia + " minutos. Fabricado en " + super.getAnyo() + " por " + super.getFabricante() + ".";
+        return getName() +
+                " flies up to " + maxAltitude +
+                " m for " + autonomy.getMinutes() +
+                " minutes. Manufactured in " +
+                getManufacturingYear() +
+                " by " + getManufacturer() + ".";
     }
 
-    public int getAutonomia() {
-        return autonomia;
+    public FlightAutonomy getAutonomy() {
+        return autonomy;
     }
 
     @Override
     public String getResistanceReport() {
-        String apto = (this.getAutonomia() < 60)? "No es apto para la competición ":"Es apto para la competición ";
 
-        return super.getName() + ": autonomía de " + this.getAutonomia() + " minutos." + apto;
+        String status = autonomy.isEligible()
+                ? "Eligible for competition"
+                : "Not eligible for competition";
+
+        return getName() +
+                ": autonomy of " +
+                autonomy.getMinutes() +
+                " minutes. " + status;
     }
 }
