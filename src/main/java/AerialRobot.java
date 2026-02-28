@@ -3,16 +3,16 @@ package domain;
 import domain.value.FlightAutonomy;
 import domain.exception.InvalidRobotSpecificationException;
 
-public class RobotAereo extends Robot implements ResistanceEvaluable {
+public class AerialRobot extends Robot implements ResistanceEvaluable {
 
     private final int maxAltitude;
     private final FlightAutonomy autonomy;
 
-    public RobotAereo(String name,
-                      String manufacturer,
-                      int manufacturingYear,
-                      int maxAltitude,
-                      int autonomyMinutes) {
+    public AerialRobot(String name,
+                       String manufacturer,
+                       int manufacturingYear,
+                       int maxAltitude,
+                       int autonomyMinutes) {
 
         super(name, manufacturer, manufacturingYear);
 
@@ -26,6 +26,14 @@ public class RobotAereo extends Robot implements ResistanceEvaluable {
         this.autonomy = new FlightAutonomy(autonomyMinutes);
     }
 
+    public int getMaxAltitude() {
+        return maxAltitude;
+    }
+
+    public FlightAutonomy getAutonomy() {
+        return autonomy;
+    }
+
     @Override
     public String getTechnicalDescription() {
         return getName() +
@@ -36,20 +44,16 @@ public class RobotAereo extends Robot implements ResistanceEvaluable {
                 " by " + getManufacturer() + ".";
     }
 
-    public FlightAutonomy getAutonomy() {
-        return autonomy;
-    }
-
     @Override
     public String getResistanceReport() {
 
-        String status = autonomy.isEligible()
+        String result = autonomy.isEligible()
                 ? "Eligible for competition"
                 : "Not eligible for competition";
 
         return getName() +
                 ": autonomy of " +
                 autonomy.getMinutes() +
-                " minutes. " + status;
+                " minutes. " + result;
     }
 }
